@@ -23,6 +23,8 @@ char* solution(const char *camelCase) {
     int     len;
     int     index;
 
+    if (camelCase == NULL)
+      return (NULL);
     len = countLen(camelCase);
     if(!(ret = (char *)malloc(len * sizeof(*ret))))
         return (NULL);
