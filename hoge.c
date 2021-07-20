@@ -43,6 +43,7 @@ int is_anagram(const char *test, const char *original) {
             if (lwc_original[k] == lwc_original[i]) 
                 if !(exists_in_int_array(usedIndex, lwc_original[k]))) {
                     usedIndex[i] =lwc_original[k];
+                    break;
                 }
         }
         if(k == strlen(original))
