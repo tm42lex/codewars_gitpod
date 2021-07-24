@@ -2,25 +2,33 @@
 #include <stdio.h>
 
 int *solve(const int *arr_in, size_t sz_in, size_t *sz_out) {
+    *sz_out  = 0;
+    size_t i = 0;
     int *arrout;
-    
-    *sz_out = 0;
-    if (!(arrout = malloc(sz_in * sizeof(*arrout))))
-        return (NULL);
+    int *for_realloc = arrout;
 
-    size_t index = 0;
-    while (index != sz_in) {
-        arrout[index] = index;
-        printf("%d\n", arrout[index]);
-        index++; 
+    if (!(arrout = (int *)malloc(sz_in * sizeof(*arrout))))
+        return (NULL);
+    while (i < sz_in) {
+        size_t k = i;
+        while (++k < sz_in && arr_in[k] != arr_in[i])
+            ;
+        if (k == sz_in) {
+            (*sz_out)++;
+            *arrout = arr_in[i];
+            arrout++;
+        }
+        i++;
     }
-    arrout += (sz_in - 1);
-    printf("\n%d\n", *arrout);
+    return (realloc(for_realloc, *sz_out));
 }
 
 int main () {
     const int test_arr[6] = {3, 4, 4, 3, 6, 3};
     size_t   hoge = 0;
     int *fuga = solve(test_arr, 6, &hoge);
+    for (int i = 0; i < 4; i++) {
+        printf("%d", fuga[i]);
+    }
     return (0);
 }
