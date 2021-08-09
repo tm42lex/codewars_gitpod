@@ -1,7 +1,38 @@
-#include <stdlib.h> /// malloc
+#include <stdlib.h> /// malloc, free
 #include <string.h> /// strlen
 
 #include <stdio.h>
+
+char num_padleft_zero(int num, int is_last_digit) {
+    if (!is_last_digit && num < 10)
+        return ('0');
+    int base = (is_last_digit) ? num : num / 10;
+    return ('0' + base % 10);
+}
+
+char *sec_to_HMS(int s) {
+    int h;
+    int m;
+    char *ret;
+
+    if (!(ret = malloc(6 + 1)))
+        return (NULL);
+    h = s / (60 * 60);
+    s -= 60 * 60 * h ;
+    m = s / 60;
+    s -= 60 * m;
+    
+    int i = 0;
+    int num = h;
+    while (i < 6) {
+        if (i == 2)
+            num = m;
+        if (i == 4)
+            num = s;
+        ret[i] = num_padleft_zero(num, i % 2);
+        i++;
+    }
+}
 
 int  is_numchar(char c) {
     return (c >= '0' && c <= '9');
@@ -28,6 +59,7 @@ void convert_to_int_array(int *array, char *strg, int records, int index) {
         digits++;
     }
     array[index] = sec;
+    sec_to_HMS(sec);
     return convert_to_int_array(array, strg, records, index + 1);
 }
 
@@ -55,7 +87,7 @@ char* stat(char* strg) {
     printf("%d\n", mean_l);
     printf("%d\n", mean_r);
     printf("%d\n", range);
-
+    free(array);
     return (NULL);
 }
 
