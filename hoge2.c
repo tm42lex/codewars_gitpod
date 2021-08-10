@@ -15,7 +15,7 @@ char *sec_to_HMS(int s) {
     int m;
     char *ret;
 
-    if (!(ret = malloc(6 + 1)))
+    if (!(ret = malloc(6 + 2 + 1)))
         return (NULL);
     h = s / (60 * 60);
     s -= 60 * 60 * h ;
@@ -23,15 +23,22 @@ char *sec_to_HMS(int s) {
     s -= 60 * m;
     
     int i = 0;
+    int d = 0;
     int num = h;
-    while (i < 6) {
-        if (i == 2)
+    while (i < 6 + 2) {
+        if (i == 2) {   
             num = m;
-        if (i == 4)
+            ret[i++] = '|';
+        }
+        if (i == 5) {
             num = s;
-        ret[i] = num_padleft_zero(num, i % 2);
-        i++;
+            ret[i++] = '|';
+        }
+        ret[i++] = num_padleft_zero(num, d % 2);
+        d++;
     }
+    ret[6 + 2] = '\0';
+    return ret;
 }
 
 int  is_numchar(char c) {
@@ -42,7 +49,7 @@ int numchar_to_int(char c) {
     return (c - '0');
 }
 
-void convert_to_int_array(int *array, char *strg, int records, int index) {
+void convert_to_int_array(int *array, char *strg, int *average, int records, int index) {
     int sec    = 0;
     int digits = 0;
     
@@ -58,9 +65,14 @@ void convert_to_int_array(int *array, char *strg, int records, int index) {
         strg++;
         digits++;
     }
+    *average += sec;
     array[index] = sec;
     sec_to_HMS(sec);
-    return convert_to_int_array(array, strg, records, index + 1);
+    return convert_to_int_array(array, strg, average, records, index + 1);
+}
+
+void bubbleSort(int *array) {
+
 }
 
 char* stat(char* strg) {
@@ -71,6 +83,7 @@ char* stat(char* strg) {
     int average;
     int mean_l;
     int mean_r;
+    char *ret;
     
     count = strlen(strg) + 2; // for missing ", " at the end
     if (count < 2 || count %10 != 0) 
@@ -78,7 +91,10 @@ char* stat(char* strg) {
     count /= 10;
     if (!(array = (int *)malloc(count  * sizeof(*array))))
         return (NULL);
-    convert_to_int_array(array, strg, count, 0);
+    if (!(ret = (char *)malloc(50 + 1)))
+        return (NULL);
+    averafe = 0;
+    convert_to_int_array(array, strg, &average, count, 0);
     mean_l = (count % 2 == 0) ? count / 2 - 1 : (count - 1) / 2 - 1;
     mean_r = (count % 2 == 0) ? count / 2 - 1 : (count + 1) / 2 - 1;
     range  = array[count - 1] - array[0];
