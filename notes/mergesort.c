@@ -48,7 +48,7 @@ void merge_sort(int *array, int h_index, int l_index) {
 }
 
 int main() {
-    int hoge [6] = {1, 2, 5, 3, 1, 0};
+    int hoge [7] = {1, 2, 5, 3, 1, 0, 2};
     int h_index;
     int l_index;
     int m_index;

@@ -3,6 +3,55 @@
 
 #include <stdio.h>
 
+void merge(int *array, int l_index, int m_index, int r_index) {
+    int *temp_r;
+    int *temp_l;
+    int r_len;
+    int l_len;
+
+    r_len   = r_index - m_index;
+    l_len = m_index + 1 - l_index;
+
+    if (!(temp_r = malloc(r_len * sizeof(*temp_r))))
+        // return (NULL);
+        return ;
+    if (!(temp_l = malloc(l_len * sizeof(*temp_l))))
+        // return (NULL);
+        return ;
+    
+    int r = 0 - 1;
+    while(++r < r_len) 
+        temp_r[r] = array[m_index + 1 + r];
+
+    int l = 0 - 1;
+     while(++l < l_len) 
+        temp_l[l] = array[l_index + l];
+    
+    r = 0;
+    l = 0;
+    while(r < r_len && l < l_len) {
+        if (temp_l[l] < temp_r[r]) 
+            array[l_index++] = temp_l[l++];
+        else 
+            array[l_index++] = temp_r[r++];
+    }
+
+    while(r < r_len) 
+        array[l_index++] = temp_r[r++];
+    
+    while(l < l_len) 
+        array[l_index++] = temp_l[l++];
+}
+
+void merge_sort(int *array, int l_index, int r_index) {
+    if (l_index < r_index) {
+        int m_index = l_index + (r_index - l_index) / 2;
+        merge_sort(array, l_index, m_index);
+        merge_sort(array, m_index + 1, r_index);
+        merge(array, l_index, m_index, r_index);
+    }
+}
+
 char num_padleft_zero(int num, int is_last_digit) {
     if (!is_last_digit && num < 10)
         return ('0');
@@ -71,10 +120,6 @@ void convert_to_int_array(int *array, char *strg, int *average, int records, int
     return convert_to_int_array(array, strg, average, records, index + 1);
 }
 
-void bubbleSort(int *array) {
-
-}
-
 char* stat(char* strg) {
     int *array;
     int count;
@@ -93,16 +138,15 @@ char* stat(char* strg) {
         return (NULL);
     if (!(ret = (char *)malloc(50 + 1)))
         return (NULL);
-    averafe = 0;
+    average = 0;
     convert_to_int_array(array, strg, &average, count, 0);
     mean_l = (count % 2 == 0) ? count / 2 - 1 : (count - 1) / 2 - 1;
     mean_r = (count % 2 == 0) ? count / 2 - 1 : (count + 1) / 2 - 1;
     range  = array[count - 1] - array[0];
 
-    printf("%d\n", count);
-    printf("%d\n", mean_l);
-    printf("%d\n", mean_r);
-    printf("%d\n", range);
+    merge_sort(array, 0, count - 1);
+    for (int i = 0; i < count; i++)
+        printf("%d\n", array[i]);
     free(array);
     return (NULL);
 }
