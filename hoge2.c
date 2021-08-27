@@ -41,6 +41,8 @@ void merge(int *array, int l_index, int m_index, int r_index) {
     
     while(l < l_len) 
         array[l_index++] = temp_l[l++];
+    free(temp_l);
+    free(temp_r);
 }
 
 void merge_sort(int *array, int l_index, int r_index) {
@@ -98,7 +100,7 @@ int numchar_to_int(char c) {
     return (c - '0');
 }
 
-void convert_to_int_array(int *array, char *strg, int *average, int records, int index) {
+void convert_to_int_array(int *array, char *strg, int *sum, int records, int index) {
     int sec    = 0;
     int digits = 0;
     
@@ -114,10 +116,9 @@ void convert_to_int_array(int *array, char *strg, int *average, int records, int
         strg++;
         digits++;
     }
-    *average += sec;
+    *sum += sec;
     array[index] = sec;
-    sec_to_HMS(sec);
-    return convert_to_int_array(array, strg, average, records, index + 1);
+    return convert_to_int_array(array, strg, sum, records, index + 1);
 }
 
 char* stat(char* strg) {
@@ -126,8 +127,9 @@ char* stat(char* strg) {
     int index;
     int range;
     int average;
-    int mean_l;
-    int mean_r;
+    int median;
+    int median_l;
+    int median_r;
     char *ret;
     
     count = strlen(strg) + 2; // for missing ", " at the end
@@ -140,13 +142,15 @@ char* stat(char* strg) {
         return (NULL);
     average = 0;
     convert_to_int_array(array, strg, &average, count, 0);
-    mean_l = (count % 2 == 0) ? count / 2 - 1 : (count - 1) / 2 - 1;
-    mean_r = (count % 2 == 0) ? count / 2 - 1 : (count + 1) / 2 - 1;
-    range  = array[count - 1] - array[0];
-
     merge_sort(array, 0, count - 1);
-    for (int i = 0; i < count; i++)
-        printf("%d\n", array[i]);
+
+    average  /= count;
+    median_l  = (count % 2 != 0) ? count / 2 : (count - 1) / 2;
+    median_r  = (count % 2 != 0) ? count / 2 : (count + 1) / 2;
+    median    = (array[median_r] + array[median_l]) / 2;
+    range     = array[count - 1] - array[0];
+    
+    printf("%s\n%s\n%s\n", sec_to_HMS(range), sec_to_HMS(average), sec_to_HMS(median));
     free(array);
     return (NULL);
 }
